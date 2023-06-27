@@ -32,7 +32,52 @@ app.get("/", (req, res) => {
 
 app.post("/onboard-user", async (req, res) => {
   try {
-    const account = await stripe.accounts.create({type: "express"});
+    const account = await stripe.accounts.create({
+          type: "express",
+          business_type: "individual",
+          business_profile: {
+            url: "https://apartma-leon.checkin.si",
+            name: "Apartma Leon",
+            support_email: "info@checkin.si",
+            product_description: "Apartma Leon checkin",
+            mcc: "4722",
+          },
+          capabilities: {
+            card_payments: {
+              requested: true
+            },
+            transfers: {
+              requested: true
+            },
+          },
+          individual: {
+            first_name: "leon",
+            last_name: "leon",
+            email: "leon@leon.si",
+            phone: "+386 40123456",
+            dob: {
+              day: 1,
+              month: 1,
+              year: 1970
+            },
+            address: {
+              city: "Ljubljana",
+              country: "SI",
+              line1: "Cesta 1",
+              line2: "1",
+              postal_code: "1000",
+              state: "SI"
+            }
+          },
+          settings: {
+            payouts: {
+              schedule: {
+                interval: "manual"
+              }
+            }
+          },
+        }
+    );
     req.session.accountID = account.id;
 
     const origin = `${req.headers.origin}`;
